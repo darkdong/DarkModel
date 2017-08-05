@@ -1,5 +1,5 @@
 # DarkModel
-A lightweight Swift library that create Model from JSON automaticcaly by introspection.
+A lightweight Swift library that create Model from JSON automatically by introspection.
 
 ## Requirements
 iOS 8.0, Swift 3.1 

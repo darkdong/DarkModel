@@ -10,7 +10,19 @@
 		42B0E8901F35749B00A8C46A /* DarkModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 42B0E88E1F35749B00A8C46A /* DarkModel.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		42B0E8971F3574D400A8C46A /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42B0E8961F3574D400A8C46A /* Model.swift */; };
 		42B0E89B1F359DF500A8C46A /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42B0E89A1F359DF500A8C46A /* Extension.swift */; };
+		42B0E8C21F36132F00A8C46A /* DarkModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42B0E8C11F36132F00A8C46A /* DarkModelTests.swift */; };
+		42B0E8C41F36132F00A8C46A /* DarkModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 42B0E88B1F35749B00A8C46A /* DarkModel.framework */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		42B0E8C51F36132F00A8C46A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 42B0E8821F35749B00A8C46A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 42B0E88A1F35749B00A8C46A;
+			remoteInfo = DarkModel;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		42B0E88B1F35749B00A8C46A /* DarkModel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DarkModel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -18,6 +30,9 @@
 		42B0E88F1F35749B00A8C46A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		42B0E8961F3574D400A8C46A /* Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		42B0E89A1F359DF500A8C46A /* Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
+		42B0E8BF1F36132F00A8C46A /* DarkModelTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DarkModelTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		42B0E8C11F36132F00A8C46A /* DarkModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarkModelTests.swift; sourceTree = "<group>"; };
+		42B0E8C31F36132F00A8C46A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -28,6 +43,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		42B0E8BC1F36132F00A8C46A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				42B0E8C41F36132F00A8C46A /* DarkModel.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -35,6 +58,7 @@
 			isa = PBXGroup;
 			children = (
 				42B0E88D1F35749B00A8C46A /* DarkModel */,
+				42B0E8C01F36132F00A8C46A /* DarkModelTests */,
 				42B0E88C1F35749B00A8C46A /* Products */,
 			);
 			sourceTree = "<group>";
@@ -43,6 +67,7 @@
 			isa = PBXGroup;
 			children = (
 				42B0E88B1F35749B00A8C46A /* DarkModel.framework */,
+				42B0E8BF1F36132F00A8C46A /* DarkModelTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -56,6 +81,15 @@
 				42B0E88F1F35749B00A8C46A /* Info.plist */,
 			);
 			path = DarkModel;
+			sourceTree = "<group>";
+		};
+		42B0E8C01F36132F00A8C46A /* DarkModelTests */ = {
+			isa = PBXGroup;
+			children = (
+				42B0E8C11F36132F00A8C46A /* DarkModelTests.swift */,
+				42B0E8C31F36132F00A8C46A /* Info.plist */,
+			);
+			path = DarkModelTests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -90,16 +124,40 @@
 			productReference = 42B0E88B1F35749B00A8C46A /* DarkModel.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		42B0E8BE1F36132F00A8C46A /* DarkModelTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 42B0E8C91F36132F00A8C46A /* Build configuration list for PBXNativeTarget "DarkModelTests" */;
+			buildPhases = (
+				42B0E8BB1F36132F00A8C46A /* Sources */,
+				42B0E8BC1F36132F00A8C46A /* Frameworks */,
+				42B0E8BD1F36132F00A8C46A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				42B0E8C61F36132F00A8C46A /* PBXTargetDependency */,
+			);
+			name = DarkModelTests;
+			productName = DarkModelTests;
+			productReference = 42B0E8BF1F36132F00A8C46A /* DarkModelTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		42B0E8821F35749B00A8C46A /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 0830;
 				LastUpgradeCheck = 0830;
 				ORGANIZATIONNAME = "Dark Dong";
 				TargetAttributes = {
 					42B0E88A1F35749B00A8C46A = {
+						CreatedOnToolsVersion = 8.3.3;
+						DevelopmentTeam = PRZ5HR5F63;
+						ProvisioningStyle = Automatic;
+					};
+					42B0E8BE1F36132F00A8C46A = {
 						CreatedOnToolsVersion = 8.3.3;
 						DevelopmentTeam = PRZ5HR5F63;
 						ProvisioningStyle = Automatic;
@@ -119,12 +177,20 @@
 			projectRoot = "";
 			targets = (
 				42B0E88A1F35749B00A8C46A /* DarkModel */,
+				42B0E8BE1F36132F00A8C46A /* DarkModelTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		42B0E8891F35749B00A8C46A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		42B0E8BD1F36132F00A8C46A /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -143,7 +209,23 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		42B0E8BB1F36132F00A8C46A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				42B0E8C21F36132F00A8C46A /* DarkModelTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		42B0E8C61F36132F00A8C46A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 42B0E88A1F35749B00A8C46A /* DarkModel */;
+			targetProxy = 42B0E8C51F36132F00A8C46A /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		42B0E8911F35749B00A8C46A /* Debug */ = {
@@ -287,6 +369,34 @@
 			};
 			name = Release;
 		};
+		42B0E8C71F36132F00A8C46A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				DEVELOPMENT_TEAM = PRZ5HR5F63;
+				INFOPLIST_FILE = DarkModelTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.darkdong.swift.DarkModel.DarkModelTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Debug;
+		};
+		42B0E8C81F36132F00A8C46A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				DEVELOPMENT_TEAM = PRZ5HR5F63;
+				INFOPLIST_FILE = DarkModelTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.darkdong.swift.DarkModel.DarkModelTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -304,6 +414,15 @@
 			buildConfigurations = (
 				42B0E8941F35749B00A8C46A /* Debug */,
 				42B0E8951F35749B00A8C46A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		42B0E8C91F36132F00A8C46A /* Build configuration list for PBXNativeTarget "DarkModelTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				42B0E8C71F36132F00A8C46A /* Debug */,
+				42B0E8C81F36132F00A8C46A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 		};

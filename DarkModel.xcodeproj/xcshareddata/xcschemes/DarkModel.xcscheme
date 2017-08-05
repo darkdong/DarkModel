@@ -28,7 +28,26 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "42B0E8BE1F36132F00A8C46A"
+               BuildableName = "DarkModelTests.xctest"
+               BlueprintName = "DarkModelTests"
+               ReferencedContainer = "container:DarkModel.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "42B0E88A1F35749B00A8C46A"
+            BuildableName = "DarkModel.framework"
+            BlueprintName = "DarkModel"
+            ReferencedContainer = "container:DarkModel.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </TestAction>
