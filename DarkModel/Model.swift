@@ -41,18 +41,13 @@ open class Model: NSObject {
         var attributes = PropertyAttributes()
     }
     
-    class var propertyKeyMapper: [String: String]? {
+    open class var propertyKeyMapper: [String: String]? {
         return nil
-    }
-
-    //convenience to get property key's according json key
-    class func jsonKey(_ propertyKey: String) -> String {
-        return propertyKeyMapper?[propertyKey] ?? propertyKey
     }
 
     //If collection property which contain objects of Model Type, such as [Model], [String: Model]
     //property name and its class type MUST be provided:
-    public class var modelCollectionProperties: [String: Model.Type] {
+    open class var modelCollectionProperties: [String: Model.Type] {
         return [:]
     }
     
@@ -68,6 +63,11 @@ open class Model: NSObject {
         return [String: Model](json: json, constructor: { (json) -> Model? in
             return self.init(json: json)
         })
+    }
+    
+    //convenience to get property key's according json key
+    class func jsonKey(_ propertyKey: String) -> String {
+        return propertyKeyMapper?[propertyKey] ?? propertyKey
     }
     
     //for performance, introspect model property info only once, cache them to reuse
@@ -150,7 +150,7 @@ open class Model: NSObject {
         return infos
     }
     
-    public override init() {
+    override public init() {
         super.init()
     }
     
@@ -250,33 +250,10 @@ open class Model: NSObject {
             return nil
         }
     }
-}
-
-extension Array {
-    init(json: Any?, constructor: (Any?) -> Element?) {
-        self.init()
-        
-        if let jsonArray = json as? [Any?] {
-            reserveCapacity(jsonArray.count)
-            for any in jsonArray {
-                if let element = constructor(any) {
-                    append(element)
-                }
-            }
-        }
+    
+    //convenience to get property key's according json key
+    public func jsonKey(_ propertyKey: String) -> String {
+        return type(of: self).jsonKey(propertyKey)
     }
 }
 
-extension Dictionary {
-    init(json: Any?, constructor: (Any?) -> Value?) {
-        self.init()
-        
-        if let jsonDic = json as? [Key: Any] {
-            for (key, value) in jsonDic {
-                if let model = constructor(value) {
-                    self[key] = model
-                }
-            }
-        }
-    }
-}

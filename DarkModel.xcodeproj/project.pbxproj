@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		42B0E8901F35749B00A8C46A /* DarkModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 42B0E88E1F35749B00A8C46A /* DarkModel.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		42B0E8971F3574D400A8C46A /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42B0E8961F3574D400A8C46A /* Model.swift */; };
+		42B0E89B1F359DF500A8C46A /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42B0E89A1F359DF500A8C46A /* Extension.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -16,6 +17,7 @@
 		42B0E88E1F35749B00A8C46A /* DarkModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DarkModel.h; sourceTree = "<group>"; };
 		42B0E88F1F35749B00A8C46A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		42B0E8961F3574D400A8C46A /* Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
+		42B0E89A1F359DF500A8C46A /* Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -49,6 +51,7 @@
 			isa = PBXGroup;
 			children = (
 				42B0E8961F3574D400A8C46A /* Model.swift */,
+				42B0E89A1F359DF500A8C46A /* Extension.swift */,
 				42B0E88E1F35749B00A8C46A /* DarkModel.h */,
 				42B0E88F1F35749B00A8C46A /* Info.plist */,
 			);
@@ -136,6 +139,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				42B0E8971F3574D400A8C46A /* Model.swift in Sources */,
+				42B0E89B1F359DF500A8C46A /* Extension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
