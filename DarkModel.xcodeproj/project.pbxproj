@@ -8,12 +8,14 @@
 
 /* Begin PBXBuildFile section */
 		42B0E8901F35749B00A8C46A /* DarkModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 42B0E88E1F35749B00A8C46A /* DarkModel.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		42B0E8971F3574D400A8C46A /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42B0E8961F3574D400A8C46A /* Model.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		42B0E88B1F35749B00A8C46A /* DarkModel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DarkModel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		42B0E88E1F35749B00A8C46A /* DarkModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DarkModel.h; sourceTree = "<group>"; };
 		42B0E88F1F35749B00A8C46A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		42B0E8961F3574D400A8C46A /* Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -46,6 +48,7 @@
 		42B0E88D1F35749B00A8C46A /* DarkModel */ = {
 			isa = PBXGroup;
 			children = (
+				42B0E8961F3574D400A8C46A /* Model.swift */,
 				42B0E88E1F35749B00A8C46A /* DarkModel.h */,
 				42B0E88F1F35749B00A8C46A /* Info.plist */,
 			);
@@ -132,6 +135,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				42B0E8971F3574D400A8C46A /* Model.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -250,6 +254,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = DarkModel/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.darkdong.swift.DarkModel;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -269,6 +274,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = DarkModel/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.darkdong.swift.DarkModel;
 				PRODUCT_NAME = "$(TARGET_NAME)";
