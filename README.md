@@ -109,7 +109,7 @@ github "darkdong/DarkModel"
 ```
 
 ### 手动
-Download and add sources to your project
+下载并添加源文件到您的工程文件
 
 ## 使用方法
 如果使用 framework 的话
@@ -190,4 +190,4 @@ class PersonModel: Model {
 
 ## 许可证
 
-DarkModel 使用 MIT 许可证。 详见[See LICENSE](https://github.com/darkdong/DarkModel/blob/master/LICENSE)。
+DarkModel 使用 MIT 许可证。 详见[See LICENSE](https://github.com/darkdong/DarkModel/blob/master/LICENSE)。
