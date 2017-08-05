@@ -40,40 +40,41 @@ open class Model: NSObject {
         var jsonKey = ""
         var attributes = PropertyAttributes()
     }
-    
+
+    /// map property key name to JSON key name
     open class var propertyKeyMapper: [String: String]? {
         return nil
     }
 
-    //If collection property which contain objects of Model Type, such as [Model], [String: Model]
-    //property name and its class type MUST be provided:
+    /// If collection property which contain objects of Model Type, such as [Model], [String: Model]
+    /// property name and its class type MUST be provided:
     open class var modelCollectionProperties: [String: Model.Type] {
         return [:]
     }
     
-    //convenience to create an array of Model from JSON
+    /// convenience to create an array of Model from JSON
     public class func array(json: Any?) -> [Model] {
         return [Model](json: json, constructor: { (json) -> Model? in
             return self.init(json: json)
         })
     }
 
-    //convenience to create a dictionary with Model as value from JSON
+    /// convenience to create a dictionary with Model as value from JSON
     public class func dictionary(json: Any?) -> [String: Model] {
         return [String: Model](json: json, constructor: { (json) -> Model? in
             return self.init(json: json)
         })
     }
     
-    //convenience to get property key's according json key
+    /// convenience to get property key's according json key
     class func jsonKey(_ propertyKey: String) -> String {
         return propertyKeyMapper?[propertyKey] ?? propertyKey
     }
     
-    //for performance, introspect model property info only once, cache them to reuse
+    /// for performance, introspect model property info only once, cache them to reuse
     private static var cachedAllModelPropertyInfos: [String: [PropertyInfo]] = [:]
     
-    //extract property type from attribute string
+    /// extract property type from attribute string
     private static func extractPropertyAttributeType(from string: String) -> AnyClass? {
         // type string format: @"ClassName", B, q, f
         if let char = string.characters.first, char == "@" {
@@ -87,7 +88,7 @@ open class Model: NSObject {
         return nil
     }
     
-    //extract property read-only attribute
+    /// extract property read-only attribute
     private static func extractPropertyAttributeReadOnly(from string: String) -> Bool {
         // read-only format: R
         if let char = string.characters.first, char == "R" {
@@ -97,10 +98,10 @@ open class Model: NSObject {
         return false
     }
     
-    //for introspection thread-safe
+    /// make introspection thread-safe
     private static let semaphore = DispatchSemaphore(value: 1)
     
-    //introspect class to get info of all available properties
+    /// introspect class to get info of all available properties
     class func propertyInfos() -> [PropertyInfo] {
         semaphore.wait()
         defer {
@@ -116,7 +117,7 @@ open class Model: NSObject {
         var infos: [PropertyInfo] = []
         var count: UInt32 = 0
         if let properties = class_copyPropertyList(self, &count) {
-            print("--------- properties count", count)
+//            print("--------- properties count", count)
             for i in 0..<Int(count) {
                 var info = PropertyInfo()
                 let property = properties[i]
@@ -125,7 +126,7 @@ open class Model: NSObject {
                 info.propertyKey = propertyKey
                 info.jsonKey = jsonKey(propertyKey)
                 
-                print("property:", propertyKey, "attributes:", String(cString: property_getAttributes(property)!))
+//                print("property:", propertyKey, "attributes:", String(cString: property_getAttributes(property)!))
                 
                 if let cstring = property_copyAttributeValue(property, PropertyAttributes.keyType) {
                     let string = String(cString: cstring)
@@ -195,21 +196,21 @@ open class Model: NSObject {
         }
     }
     
-    //display property name and value friendly
+    /// display property name and value friendly
     override open var description: String {
         let selfClass = type(of: self)
         var desc = "|\(selfClass)| "
         for info in selfClass.propertyInfos() {
+            desc += ", "
             desc += info.propertyKey + ": "
             if let propertyValue = value(forKey: info.propertyKey) {
                 desc += "\(propertyValue)"
             }
-            desc += ", "
         }
         return desc
     }
 
-    //convert Model to JSON object
+    /// convert Model to JSON object
     open func json() -> [String: Any] {
         var dictionary = [String: Any]()
         for info in type(of: self).propertyInfos() {
@@ -237,12 +238,12 @@ open class Model: NSObject {
         return dictionary
     }
     
-    //convert Model to JSON data
+    /// convert Model to JSON data
     public func jsonData(options: JSONSerialization.WritingOptions = []) -> Data? {
         return try? JSONSerialization.data(withJSONObject: json(), options: options)
     }
     
-    //convert Model to JSON string
+    /// convert Model to JSON string
     public func jsonString(options: JSONSerialization.WritingOptions = []) -> String? {
         if let data = jsonData(options: options) {
             return String(data: data, encoding: .utf8)
@@ -251,7 +252,7 @@ open class Model: NSObject {
         }
     }
     
-    //convenience to get property key's according json key
+    /// convenience to get property key's according json key
     public func jsonKey(_ propertyKey: String) -> String {
         return type(of: self).jsonKey(propertyKey)
     }
