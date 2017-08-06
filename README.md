@@ -21,16 +21,17 @@ import DarkModel
 ```
 All your model classes **MUST** inherit Model
 
-### Simple Usage
+### Basic Usage
 ```
 // JSON:
 {
     "name": "Dark",
     "age": 24,
-    "hobbies": ["Metal", "Girls"],
+    "hobbies": ["Metal", "Game"],
     "lover": {
         "name": "Yu",
         "age": 16,
+        "birthday": 827251200
         "hobbies": ["Shopping", "Eating", "Dancing"]
     }
 }
@@ -39,6 +40,7 @@ All your model classes **MUST** inherit Model
 class PersonModel: Model {
     var name = ""
     var age = 0
+    var birthday: Date?
     var hobbies = [String]()
     var lover: PersonModel?
 }
@@ -55,7 +57,7 @@ let person = PersonModel(json: json)
 
 // Model:
 class PersonModel: Model {
-    override class var propertyKeyMapper: [String: String] {
+    override class var propertyToJSONKeyMapper: [String: String] {
         return ["name": "user_name"]
     }
     var name = ""
@@ -82,7 +84,7 @@ class PersonModel: Model {
 
 // Model:
 class PersonModel: Model {
-    override class var modelCollectionProperties: [String: Model.Type] {
+    override class var collectionPropertyToModelTypeMapper: [String: Model.Type] {
         return ["friends": PersonModel.self]
     }
     var name = ""
@@ -118,16 +120,17 @@ import DarkModel
 ```
 所有类 **必须** 继承自Model
 
-### 简单使用
+### 零配置用法
 ```
 // JSON:
 {
     "name": "Dark",
     "age": 24,
-    "hobbies": ["Metal", "Girls"],
+    "hobbies": ["Metal", "Game"],
     "lover": {
         "name": "Yu",
         "age": 16,
+        "birthday": 827251200
         "hobbies": ["Shopping", "Eating", "Dancing"]
     }
 }
@@ -136,6 +139,7 @@ import DarkModel
 class PersonModel: Model {
     var name = ""
     var age = 0
+    var birthday: Date?
     var hobbies = [String]()
     var lover: PersonModel?
 }
@@ -152,7 +156,7 @@ let person = PersonModel(json: json)
 
 // Model:
 class PersonModel: Model {
-    override class var propertyKeyMapper: [String: String] {
+    override class var propertyToJSONKeyMapper: [String: String] {
         return ["name": "user_name"]
     }
     var name = ""
@@ -179,7 +183,7 @@ class PersonModel: Model {
 
 // Model:
 class PersonModel: Model {
-    override class var modelCollectionProperties: [String: Model.Type] {
+    override class var collectionPropertyToModelTypeMapper: [String: Model.Type] {
         return ["friends": PersonModel.self]
     }
     var name = ""

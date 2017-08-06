@@ -8,10 +8,7 @@
 
 import Foundation
 
-// NOTE: all custom model must inherits Model.
-// when declare a property in Model, the type of property:
-// must NOT be optional if it is Swift struct type or primitive type;
-// can be optional if it is Objective-C class.
+// NOTE: when declares a property of Int in Model, its type must NOT be optional.
 
 // var anInt: Int = 0 // correct
 // var anInt: NSInteger = 0 // correct
@@ -42,13 +39,13 @@ open class Model: NSObject {
     }
 
     /// map property key name to JSON key name
-    open class var propertyKeyMapper: [String: String] {
+    open class var propertyToJSONKeyMapper: [String: String] {
         return [:]
     }
 
-    /// If collection property which contain objects of Model Type, such as [Model], [String: Model]
-    /// property name and its class type MUST be provided:
-    open class var modelCollectionProperties: [String: Model.Type] {
+    /// If property is a collection which contains objects of Model type, e.g. [Model], [String: Model]
+    /// property name and its Model type MUST be provided to create collection object correctly:
+    open class var collectionPropertyToModelTypeMapper: [String: Model.Type] {
         return [:]
     }
     
@@ -68,7 +65,7 @@ open class Model: NSObject {
     
     /// convenience to get property key's according json key
     class func jsonKey(_ propertyKey: String) -> String {
-        return propertyKeyMapper[propertyKey] ?? propertyKey
+        return propertyToJSONKeyMapper[propertyKey] ?? propertyKey
     }
     
     /// for performance, introspect model property info only once, cache them to reuse
@@ -126,7 +123,7 @@ open class Model: NSObject {
                 info.propertyKey = propertyKey
                 info.jsonKey = jsonKey(propertyKey)
                 
-//                print("property:", propertyKey, "attributes:", String(cString: property_getAttributes(property)!))
+                print("property:", propertyKey, "attributes:", String(cString: property_getAttributes(property)!))
                 
                 if let cstring = property_copyAttributeValue(property, PropertyAttributes.keyType) {
                     let string = String(cString: cstring)
@@ -162,17 +159,18 @@ open class Model: NSObject {
             for info in type(of: self).propertyInfos() {
                 if let jsonValue = dic[info.jsonKey] {
                     let propertyKey = info.propertyKey
-                    if let classType = info.attributes.classType {
-                        if let modelType = classType as? Model.Type {
-                            //property is of Model type, create it as Model and set it
-                            let model = modelType.init(json: jsonValue)
-                            setValue(model, forKey: propertyKey)
-                        }
-                        else {
-                            //property is of non-Model type such as NSArray, NSDictionary, NSDate, NSData...
-                            if let modelType = type(of: self).modelCollectionProperties[propertyKey] {
-                                //for collections which contain objects of Model Type, such as [Model], [String: Model]
-                                //additional info must be provided: property name and its class type
+                    if propertiesToBeCustomConverted.contains(propertyKey) {
+                        let convertedValue = convert(value: jsonValue, for: propertyKey)
+                        setValue(convertedValue, forKey: propertyKey)
+                    }else {
+                        if let classType = info.attributes.classType {
+                            // property is of class type
+                            if let modelType = classType as? Model.Type {
+                                // Model
+                                let model = modelType.init(json: jsonValue)
+                                setValue(model, forKey: propertyKey)
+                            } else if let modelType = type(of: self).collectionPropertyToModelTypeMapper[propertyKey] {
+                                // NSArray or NSDictionary which contains Model
                                 if classType is NSArray.Type {
                                     let models = modelType.array(json: jsonValue)
                                     setValue(models, forKey: propertyKey)
@@ -180,16 +178,22 @@ open class Model: NSObject {
                                     let models = modelType.dictionary(json: jsonValue)
                                     setValue(models, forKey: propertyKey)
                                 }
+                            } else if classType is NSDate.Type {
+                                // Date
+                                if let timestamp = jsonValue as? TimeInterval {
+                                    let date = Date(timeIntervalSince1970: timestamp)
+                                    setValue(date, forKey: propertyKey)
+                                }
                             } else {
-                                // just set value directly
-                                //1. for non-collection class, such as: NSDate, NSData
-                                //2. and collection class which only contain foundation objects, such as: [Int], [String: NSDate]
+                                // just set proprety's value directly
+                                //1. for non-collection classes, e.g. NSString, NSNumber
+                                //2. and collection classes which contain only foundation objects, e.g. [Int], [String: Int]
                                 setValue(jsonValue, forKey: propertyKey)
                             }
+                        } else {
+                            //property is primitive type
+                            setValue(jsonValue, forKey: propertyKey)
                         }
-                    } else {
-                        //property is primitive type, set it directly
-                        setValue(jsonValue, forKey: propertyKey)
                     }
                 }
             }
@@ -230,12 +234,22 @@ open class Model: NSObject {
                         dic[k] = v
                     }
                     dictionary[jsonKey] = dic
+                } else if let date = value as? Date {
+                    dictionary[jsonKey] = date.timeIntervalSince1970
                 } else {
                     dictionary[jsonKey] = value
                 }
             }
         }
         return dictionary
+    }
+    
+    open var propertiesToBeCustomConverted: [String] {
+        return []
+    }
+    
+    open func convert(value: Any, for key: String) -> Any {
+        return value
     }
     
     /// convert Model to JSON data
