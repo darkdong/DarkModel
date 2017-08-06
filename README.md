@@ -55,7 +55,7 @@ let person = PersonModel(json: json)
 
 // Model:
 class PersonModel: Model {
-    override class var propertyKeyMapper: [String: String]? {
+    override class var propertyKeyMapper: [String: String] {
         return ["name": "user_name"]
     }
     var name = ""
@@ -152,7 +152,7 @@ let person = PersonModel(json: json)
 
 // Model:
 class PersonModel: Model {
-    override class var propertyKeyMapper: [String: String]? {
+    override class var propertyKeyMapper: [String: String] {
         return ["name": "user_name"]
     }
     var name = ""

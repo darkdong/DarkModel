@@ -42,8 +42,8 @@ open class Model: NSObject {
     }
 
     /// map property key name to JSON key name
-    open class var propertyKeyMapper: [String: String]? {
-        return nil
+    open class var propertyKeyMapper: [String: String] {
+        return [:]
     }
 
     /// If collection property which contain objects of Model Type, such as [Model], [String: Model]
@@ -68,7 +68,7 @@ open class Model: NSObject {
     
     /// convenience to get property key's according json key
     class func jsonKey(_ propertyKey: String) -> String {
-        return propertyKeyMapper?[propertyKey] ?? propertyKey
+        return propertyKeyMapper[propertyKey] ?? propertyKey
     }
     
     /// for performance, introspect model property info only once, cache them to reuse

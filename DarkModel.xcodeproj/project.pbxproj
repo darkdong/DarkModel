@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		420E519E1F371C3800DFD6CF /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 420E519D1F371C3800DFD6CF /* README.md */; };
 		42B0E8901F35749B00A8C46A /* DarkModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 42B0E88E1F35749B00A8C46A /* DarkModel.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		42B0E8971F3574D400A8C46A /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42B0E8961F3574D400A8C46A /* Model.swift */; };
 		42B0E89B1F359DF500A8C46A /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42B0E89A1F359DF500A8C46A /* Extension.swift */; };
@@ -25,6 +26,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		420E519D1F371C3800DFD6CF /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		42B0E88B1F35749B00A8C46A /* DarkModel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DarkModel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		42B0E88E1F35749B00A8C46A /* DarkModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DarkModel.h; sourceTree = "<group>"; };
 		42B0E88F1F35749B00A8C46A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -57,6 +59,7 @@
 		42B0E8811F35749B00A8C46A = {
 			isa = PBXGroup;
 			children = (
+				420E519D1F371C3800DFD6CF /* README.md */,
 				42B0E88D1F35749B00A8C46A /* DarkModel */,
 				42B0E8C01F36132F00A8C46A /* DarkModelTests */,
 				42B0E88C1F35749B00A8C46A /* Products */,
@@ -204,6 +207,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				420E519E1F371C3800DFD6CF /* README.md in Sources */,
 				42B0E8971F3574D400A8C46A /* Model.swift in Sources */,
 				42B0E89B1F359DF500A8C46A /* Extension.swift in Sources */,
 			);
@@ -425,6 +429,7 @@
 				42B0E8C81F36132F00A8C46A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
