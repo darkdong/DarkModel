@@ -98,7 +98,7 @@ class PersonModel: Model {
 }
 ```
 
-### Use Optinal Int
+### Property Is Optinal Int Type
 ```
 // JSON:
 {
@@ -129,6 +129,44 @@ class PersonModel: Model {
 }
 ```
 
+### Use Custom Conversion
+```
+    // JSON:
+    {
+        "birthday": "1996-03-20"
+    }
+
+    // Model:
+    class PersonModel: Model {
+        var birthday: Date!
+        
+        override func objectFromJSON(_ json: Any?, for property: String) -> Any? {
+            switch property {
+            case "birthday":
+                let formatter = DateFormatter()
+                formatter.dateFormat = "yyyy-MM-dd"
+                if let string = json as? String {
+                    return formatter.date(from: string)
+                } else {
+                    return nil
+                }
+            default:
+                return nil
+            }
+        }
+        
+        override func jsonFromObject(_ object: Any, for property: String) -> Any? {
+            switch property {
+            case "birthday":
+                let formatter = DateFormatter()
+                formatter.dateFormat = "yyyy-MM-dd"
+                return formatter.string(from: object as! Date)
+            default:
+                return nil
+            }
+        }
+    }
+```
 ## License
 
 DarkModel is released under the MIT license. [See LICENSE](https://github.com/darkdong/DarkModel/blob/master/LICENSE) for details.
@@ -233,7 +271,7 @@ class PersonModel: Model {
 }
 ```
 
-### Use Optinal Int
+### 属性类型为 Optinal Int
 ```
 // JSON:
 {
@@ -262,6 +300,45 @@ class PersonModel: Model {
         return dic
     }
 }
+```
+
+### 自定义转换
+```
+    // JSON:
+    {
+        "birthday": "1996-03-20"
+    }
+
+    // Model:
+    class PersonModel: Model {
+        var birthday: Date!
+        
+        override func objectFromJSON(_ json: Any?, for property: String) -> Any? {
+            switch property {
+            case "birthday":
+                let formatter = DateFormatter()
+                formatter.dateFormat = "yyyy-MM-dd"
+                if let string = json as? String {
+                    return formatter.date(from: string)
+                } else {
+                    return nil
+                }
+            default:
+                return nil
+            }
+        }
+        
+        override func jsonFromObject(_ object: Any, for property: String) -> Any? {
+            switch property {
+            case "birthday":
+                let formatter = DateFormatter()
+                formatter.dateFormat = "yyyy-MM-dd"
+                return formatter.string(from: object as! Date)
+            default:
+                return nil
+            }
+        }
+    }
 ```
 
 ## 许可证

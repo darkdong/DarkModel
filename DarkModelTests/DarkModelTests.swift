@@ -44,7 +44,7 @@ class DarkModelTests: XCTestCase {
         
         let girlName = "Yu"
         let girlAge = 16
-        let girlBirthday: TimeInterval = 827251200
+        let girlBirthday: TimeInterval = 827251200.135
         let girlHobbies = ["Shopping", "Eating", "Dancing"]
         let girl = PersonModel()
         girl.name = girlName
@@ -92,48 +92,6 @@ class DarkModelTests: XCTestCase {
         XCTAssertEqual(girl2.hobbies, girl.hobbies)
     }
     
-    func testOptionalInt() {
-        class PersonModel: Model {
-            var name = ""
-            var age: Int?
-            
-            required init(json: Any?) {
-                super.init(json: json)
-                
-                if let dic = json as? [String: Any] {
-                    age = dic[jsonKey("age")] as? Int
-                }
-            }
-            
-            override init() {
-                super.init()
-            }
-            
-            override func json() -> [String : Any] {
-                var dic = super.json()
-                if let value = age {
-                    dic[jsonKey("age")] = value
-                }
-                return dic
-            }
-        }
-        
-        let boyName = "Dark"
-        let boyAge = 24
-        let boy = PersonModel()
-        boy.name = boyName
-        boy.age = boyAge
-        
-        let jsonBoy = boy.json()
-        XCTAssertTrue(JSONSerialization.isValidJSONObject(jsonBoy))
-        XCTAssertEqual(jsonBoy["name"] as! String, boyName)
-        XCTAssertEqual(jsonBoy["age"] as! Int, boyAge)
-        
-        let boy2 = PersonModel(json: jsonBoy)
-        XCTAssertEqual(boy2.name, boy.name)
-        XCTAssertEqual(boy2.age, boy.age)
-    }
-    
     func testPropertyToJSONKeyMapper() {
         class PersonModel: Model {
             override class var propertyToJSONKeyMapper: [String: String] {
@@ -159,7 +117,7 @@ class DarkModelTests: XCTestCase {
         XCTAssertEqual(boy2.age, boy.age)
     }
 
-    func testCollectionPropertyToModelTypeMapper() {
+    func testPropertyToCollectionElementTypeMapper() {
         class PersonModel: Model {
             override class var propertyToJSONKeyMapper: [String: String] {
                 return ["name": "user_name"]
@@ -223,5 +181,93 @@ class DarkModelTests: XCTestCase {
         XCTAssertEqual(boy2.friends[1].name, boy.friends[1].name)
         XCTAssertEqual(boy2.friends[1].age, boy.friends[1].age)
         XCTAssertEqual(boy2.importantDates, boy.importantDates)
+    }
+    
+    func testPropertyIsOfOptionalIntType() {
+        class PersonModel: Model {
+            var name = ""
+            var age: Int?
+            
+            required init(json: Any?) {
+                super.init(json: json)
+                
+                if let dic = json as? [String: Any] {
+                    age = dic[jsonKey("age")] as? Int
+                }
+            }
+            
+            override init() {
+                super.init()
+            }
+            
+            override func json() -> [String : Any] {
+                var dic = super.json()
+                if let value = age {
+                    dic[jsonKey("age")] = value
+                }
+                return dic
+            }
+        }
+        
+        let boyName = "Dark"
+        let boyAge = 24
+        let boy = PersonModel()
+        boy.name = boyName
+        boy.age = boyAge
+        
+        let jsonBoy = boy.json()
+        XCTAssertTrue(JSONSerialization.isValidJSONObject(jsonBoy))
+        XCTAssertEqual(jsonBoy["name"] as! String, boyName)
+        XCTAssertEqual(jsonBoy["age"] as! Int, boyAge)
+        
+        let boy2 = PersonModel(json: jsonBoy)
+        XCTAssertEqual(boy2.name, boy.name)
+        XCTAssertEqual(boy2.age, boy.age)
+    }
+    
+    func testCustomConversionDate() {
+        class PersonModel: Model {
+            var birthday: Date!
+            
+            override func objectFromJSON(_ json: Any?, for property: String) -> Any? {
+                switch property {
+                case "birthday":
+                    let formatter = DateFormatter()
+                    formatter.dateFormat = "yyyy-MM-dd"
+                    if let string = json as? String {
+                        return formatter.date(from: string)
+                    } else {
+                        return nil
+                    }
+                default:
+                    return nil
+                }
+            }
+            
+            override func jsonFromObject(_ object: Any, for property: String) -> Any? {
+                switch property {
+                case "birthday":
+                    let formatter = DateFormatter()
+                    formatter.dateFormat = "yyyy-MM-dd"
+                    return formatter.string(from: object as! Date)
+                default:
+                    return nil
+                }
+            }
+        }
+        
+        let string = "{\"birthday\": \"1996-03-20\"}"
+        let data = string.data(using: .utf8)!
+        let json = try? JSONSerialization.jsonObject(with: data)
+
+        let boy = PersonModel(json: json)
+        
+        let dateComponents = Calendar.current.dateComponents([.year, .month, .day], from: boy.birthday)
+        XCTAssertEqual(dateComponents.year, 1996)
+        XCTAssertEqual(dateComponents.month, 3)
+        XCTAssertEqual(dateComponents.day, 20)
+        
+        let jsonBoy = boy.json()
+        XCTAssertEqual(jsonBoy["birthday"] as! String, "1996-03-20")
     }
 }

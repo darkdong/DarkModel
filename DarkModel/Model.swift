@@ -235,6 +235,8 @@ open class Model: NSObject {
             desc += info.propertyKey + ": "
             if let propertyValue = value(forKey: info.propertyKey) {
                 desc += "\(propertyValue)"
+            } else {
+                desc += "nil"
             }
         }
         return desc
@@ -292,11 +294,11 @@ open class Model: NSObject {
         return []
     }
     
-    open func objectFromJSON(_ json: Any?, for propertyKey: String) -> Any? {
+    open func objectFromJSON(_ json: Any?, for property: String) -> Any? {
         return nil
     }
     
-    open func jsonFromObject(_ object: Any, for propertyKey: String) -> Any? {
+    open func jsonFromObject(_ object: Any, for property: String) -> Any? {
         return nil
     }
     
@@ -308,8 +310,8 @@ open class Model: NSObject {
         }
     }
     
-    public func dateFromJSON(_ json: Any?, for propertyKey: String) -> Date? {
-        if let date = objectFromJSON(json, for: propertyKey) as? Date {
+    public func dateFromJSON(_ json: Any?, for property: String) -> Date? {
+        if let date = objectFromJSON(json, for: property) as? Date {
             return date
         } else {
             return dateFromJSON(json)
@@ -320,8 +322,8 @@ open class Model: NSObject {
         return date.timeIntervalSince1970
     }
     
-    public func jsonFromDate(_ date: Date, for propertyKey: String) -> Any {
-        if let json = jsonFromObject(date, for: propertyKey) {
+    public func jsonFromDate(_ date: Date, for property: String) -> Any {
+        if let json = jsonFromObject(date, for: property) {
             return json
         } else {
             return jsonFromDate(date)
