@@ -37,6 +37,7 @@ class DarkModelTests: XCTestCase {
         class PersonModel: Model {
             var name = ""
             var age = 0
+            var homePage: URL!
             var birthday: Date?
             var hobbies = [String]()
             var lover: PersonModel?
@@ -54,15 +55,18 @@ class DarkModelTests: XCTestCase {
 
         let boyName = "Dark"
         let boyAge = 24
+        let homePage = "http://odetodark.com"
         let boyHobbies = ["Metal", "Game"]
         let boy = PersonModel()
         boy.name = boyName
         boy.age = boyAge
+        boy.homePage = URL(string: homePage)
         boy.hobbies = boyHobbies
         boy.lover = girl
-        
+                
         let keyName = "name"
         let keyAge = "age"
+        let keyHomePage = "homePage"
         let keyBirthday = "birthday"
         let keyHobbies = "hobbies"
         let jsonBoy = boy.json()
@@ -70,6 +74,7 @@ class DarkModelTests: XCTestCase {
         XCTAssertTrue(JSONSerialization.isValidJSONObject(jsonBoy))
         XCTAssertEqual(jsonBoy[keyName] as! String, boyName)
         XCTAssertEqual(jsonBoy[keyAge] as! Int, boyAge)
+        XCTAssertEqual(jsonBoy[keyHomePage] as! String, homePage)
         XCTAssertEqual(jsonBoy[keyHobbies] as! [String], boyHobbies)
         
         let jsonGirl = jsonBoy["lover"] as! [String: Any]
@@ -81,6 +86,7 @@ class DarkModelTests: XCTestCase {
         let boy2 = PersonModel(json: jsonBoy)
         XCTAssertEqual(boy2.name, boy.name)
         XCTAssertEqual(boy2.age, boy.age)
+        XCTAssertEqual(boy2.homePage, boy.homePage)
         XCTAssertNil(boy2.birthday)
         XCTAssertEqual(boy2.hobbies, boy.hobbies)
         

@@ -174,7 +174,14 @@ open class Model: NSObject {
                             if let date = dateFromJSON(jsonValue, for: propertyKey) {
                                 setValue(date, forKey: propertyKey)
                             } else {
-                                assertionFailure("Can't covert \(classType) automatically on \"\(propertyKey)\", You must implement your own objectFromJSON(for:) to return a \(classType)")
+                                assertionFailure("Can't covert to Date automatically on \"\(propertyKey)\", You must implement your own objectFromJSON(for:) to return Date")
+                            }
+                        } else if classType is NSURL.Type {
+                            // URL
+                            if let url = urlFromJSON(jsonValue, for: propertyKey) {
+                                setValue(url, forKey: propertyKey)
+                            } else {
+                                assertionFailure("Can't covert to URL automatically on \"\(propertyKey)\", You must implement your own objectFromJSON(for:) to return URL")
                             }
                         } else if classType is NSArray.Type {
                             // Array
@@ -196,6 +203,7 @@ open class Model: NSObject {
                                 setValue(jsonValue, forKey: propertyKey)
                             }
                         } else if classType is NSDictionary.Type {
+                            // Dictionary
                             if let elementType = type(of: self).propertyToCollectionElementTypeMapper[propertyKey] {
                                 if let modelType = elementType as? Model.Type {
                                     let models = modelType.dictionary(json: jsonValue)
@@ -214,7 +222,7 @@ open class Model: NSObject {
                                 setValue(jsonValue, forKey: propertyKey)
                             }
                         } else {
-                            // just set proprety's value directly for auto-convertible type, e.g. Int, String, NSNumber, NSString
+                            // Other class types that can be auto-convertible, e.g. NSNumber, NSString.
                             setValue(jsonValue, forKey: propertyKey)
                         }
                     } else {
@@ -252,6 +260,8 @@ open class Model: NSObject {
                     dictionary[jsonKey] = model.json()
                 } else if let date = value as? Date {
                     dictionary[jsonKey] = jsonFromDate(date, for: info.propertyKey)
+                } else if let url = value as? URL {
+                    dictionary[jsonKey] = jsonFromURL(url, for: info.propertyKey)
                 } else if let objects = value as? [Any] {
                     if let models = objects as? [Model] {
                         var array = [Any]()
@@ -302,31 +312,39 @@ open class Model: NSObject {
         return nil
     }
     
-    func dateFromJSON(_ json: Any?) -> Date? {
-        if let timestamp = json as? TimeInterval {
+    func dateFromJSON(_ json: Any?, for property: String) -> Date? {
+        if let date = objectFromJSON(json, for: property) as? Date {
+            return date
+        } else if let timestamp = json as? TimeInterval {
             return Date(timeIntervalSince1970: timestamp)
         } else {
             return nil
         }
     }
     
-    public func dateFromJSON(_ json: Any?, for property: String) -> Date? {
-        if let date = objectFromJSON(json, for: property) as? Date {
-            return date
+    func urlFromJSON(_ json: Any?, for property: String) -> URL? {
+        if let url = objectFromJSON(json, for: property) as? URL {
+            return url
+        } else if let string = json as? String {
+            return URL(string: string)
         } else {
-            return dateFromJSON(json)
+            return nil
         }
     }
     
-    func jsonFromDate(_ date: Date) -> Any {
-        return date.timeIntervalSince1970
-    }
-    
-    public func jsonFromDate(_ date: Date, for property: String) -> Any {
+    func jsonFromDate(_ date: Date, for property: String) -> Any {
         if let json = jsonFromObject(date, for: property) {
             return json
         } else {
-            return jsonFromDate(date)
+            return date.timeIntervalSince1970
+        }
+    }
+    
+    func jsonFromURL(_ url: URL, for property: String) -> Any {
+        if let json = jsonFromObject(url, for: property) {
+            return json
+        } else {
+            return url.absoluteString
         }
     }
     

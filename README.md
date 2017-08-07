@@ -28,6 +28,7 @@ All your model classes **MUST** inherit Model
     "name": "Dark",
     "age": 24,
     "hobbies": ["Metal", "Game"],
+    "homePage": "http://odetodark.com"
     "lover": {
         "name": "Yu",
         "age": 16,
@@ -40,6 +41,7 @@ All your model classes **MUST** inherit Model
 class PersonModel: Model {
     var name = ""
     var age = 0
+    var homePage: URL!
     var birthday: Date?
     var hobbies = [String]()
     var lover: PersonModel?
@@ -203,6 +205,7 @@ import DarkModel
     "name": "Dark",
     "age": 24,
     "hobbies": ["Metal", "Game"],
+    "homePage": "http://odetodark.com"
     "lover": {
         "name": "Yu",
         "age": 16,
@@ -215,6 +218,7 @@ import DarkModel
 class PersonModel: Model {
     var name = ""
     var age = 0
+    var homePage: URL!
     var birthday: Date?
     var hobbies = [String]()
     var lover: PersonModel?
@@ -222,7 +226,6 @@ class PersonModel: Model {
 
 let person = PersonModel(json: json)
 let json = person.json()
-
 ```
 ### 使用不同的JSON键值
 ```
