@@ -207,7 +207,7 @@ iOS 8.0, Swift 3.1
 ## 使用方法
 所有类 **必须** 继承自Model。
 
-因为不能在Objective-C中子类化一个Swift类, 所以本库只能用于Swift。
+因为不能在Objective-C中子类化一个Swift类, 所以本库只能用于Swift。
 
 ### 零配置用法
 ```
