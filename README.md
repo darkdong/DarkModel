@@ -4,8 +4,6 @@ A lightweight Swift library that create Model from JSON automatically by introsp
 ## Requirements
 iOS 8.0, Swift 3.1 
 
-**Note**: Because you cannot subclass a Swift class in Objective-C, use it in Swift.
-
 ## Installation
 
 ### Carthage
@@ -26,6 +24,7 @@ Download and add sources to your project
 
 ## Usage
 All your model classes **MUST** inherit Model
+Because you cannot subclass a Swift class in Objective-C, it can be used in Swift only.
 
 ### Basic Usage
 ```
@@ -187,7 +186,6 @@ DarkModel is released under the MIT license. [See LICENSE](https://github.com/da
 ## 系统需求
 iOS 8.0, Swift 3.1 
 
-**注意**: 因为不能在Objective-C中子类化一个Swift类, 所以本库只能用于Swift.
 ## 安装
 
 ### Carthage
@@ -207,6 +205,7 @@ iOS 8.0, Swift 3.1
 
 ## 使用方法
 所有类 **必须** 继承自Model
+因为不能在Objective-C中子类化一个Swift类, 所以本库只能用于Swift.
 
 ### 零配置用法
 ```
