@@ -23,7 +23,8 @@ iOS 8.0, Swift 3.1
 Download and add sources to your project
 
 ## Usage
-All your model classes **MUST** inherit Model
+All your model classes **MUST** inherit Model.
+
 Because you cannot subclass a Swift class in Objective-C, it can be used in Swift only.
 
 ### Basic Usage
@@ -204,8 +205,9 @@ iOS 8.0, Swift 3.1
 下载并添加源文件到您的工程文件
 
 ## 使用方法
-所有类 **必须** 继承自Model
-因为不能在Objective-C中子类化一个Swift类, 所以本库只能用于Swift.
+所有类 **必须** 继承自Model。
+
+因为不能在Objective-C中子类化一个Swift类, 所以本库只能用于Swift。
 
 ### 零配置用法
 ```
