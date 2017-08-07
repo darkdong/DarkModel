@@ -46,6 +46,8 @@ class PersonModel: Model {
 }
 
 let person = PersonModel(json: json)
+let json = person.json()
+
 ```
 ### Use Different JSON Key
 ```
@@ -219,6 +221,8 @@ class PersonModel: Model {
 }
 
 let person = PersonModel(json: json)
+let json = person.json()
+
 ```
 ### 使用不同的JSON键值
 ```
