@@ -4,12 +4,21 @@ A lightweight Swift library that create Model from JSON automatically by introsp
 ## Requirements
 iOS 8.0, Swift 3.1 
 
+**Note**: Because you cannot subclass a Swift class in Objective-C, use it in Swift.
+
 ## Installation
 
 ### Carthage
 
 1. Add `github "darkdong/DarkModel"` to your Cartfile
-2. Run `carthage update --platform ios` and add the framework to your project.
+2. Run `carthage update --platform ios`
+3. Add the framework to your project manually.
+4. `import DarkModel` in Swift file
+
+### CocoaPods
+
+1. Add `pod "DarkModel"` to your Podfile
+2. Run `pod install or pod update`.
 3. `import DarkModel` in Swift file
 
 ### Manual
@@ -178,11 +187,19 @@ DarkModel is released under the MIT license. [See LICENSE](https://github.com/da
 ## 系统需求
 iOS 8.0, Swift 3.1 
 
+**注意**: 因为不能在Objective-C中子类化一个Swift类, 所以本库只能用于Swift.
 ## 安装
 
 ### Carthage
 1. 添加 `github "darkdong/DarkModel"` 至 Cartfile
-2. 运行 `carthage update --platform ios` 之后添加framework至工程文件中.
+2. 运行 `carthage update --platform ios` 
+3. 手动添加framework至工程文件.
+4. `import DarkModel` 在Swift文件中导入
+
+### CocoaPods
+
+1. 添加 `pod "DarkModel"` 至 Podfile
+2. 运行 `pod install or pod update`.
 3. `import DarkModel` 在Swift文件中导入
 
 ### 手动
