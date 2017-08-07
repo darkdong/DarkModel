@@ -7,18 +7,15 @@ iOS 8.0, Swift 3.1
 ## Installation
 
 ### Carthage
-```
-github "darkdong/DarkModel"
-```
+
+1. Add `github "darkdong/DarkModel"` to your Cartfile
+2. Run `carthage update --platform ios` and add the framework to your project.
+3. import DarkModel
 
 ### Manual
 Download and add sources to your project
 
 ## Usage
-If you use framework
-```
-import DarkModel
-```
 All your model classes **MUST** inherit Model
 
 ### Basic Usage
@@ -184,18 +181,14 @@ iOS 8.0, Swift 3.1
 ## 安装
 
 ### Carthage
-```
-github "darkdong/DarkModel"
-```
+1. 添加 `github "darkdong/DarkModel"` 至 Cartfile
+2. 运行 `carthage update --platform ios` 之后添加framework至工程文件中.
+3. import DarkModel
 
 ### 手动
 下载并添加源文件到您的工程文件
 
 ## 使用方法
-如果使用 framework 的话
-```
-import DarkModel
-```
 所有类 **必须** 继承自Model
 
 ### 零配置用法
