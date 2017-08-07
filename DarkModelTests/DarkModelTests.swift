@@ -92,6 +92,48 @@ class DarkModelTests: XCTestCase {
         XCTAssertEqual(girl2.hobbies, girl.hobbies)
     }
     
+    func testOptionalInt() {
+        class PersonModel: Model {
+            var name = ""
+            var age: Int?
+            
+            required init(json: Any?) {
+                super.init(json: json)
+                
+                if let dic = json as? [String: Any] {
+                    age = dic[jsonKey("age")] as? Int
+                }
+            }
+            
+            override init() {
+                super.init()
+            }
+            
+            override func json() -> [String : Any] {
+                var dic = super.json()
+                if let value = age {
+                    dic[jsonKey("age")] = value
+                }
+                return dic
+            }
+        }
+        
+        let boyName = "Dark"
+        let boyAge = 24
+        let boy = PersonModel()
+        boy.name = boyName
+        boy.age = boyAge
+        
+        let jsonBoy = boy.json()
+        XCTAssertTrue(JSONSerialization.isValidJSONObject(jsonBoy))
+        XCTAssertEqual(jsonBoy["name"] as! String, boyName)
+        XCTAssertEqual(jsonBoy["age"] as! Int, boyAge)
+        
+        let boy2 = PersonModel(json: jsonBoy)
+        XCTAssertEqual(boy2.name, boy.name)
+        XCTAssertEqual(boy2.age, boy.age)
+    }
+    
     func testPropertyToJSONKeyMapper() {
         class PersonModel: Model {
             override class var propertyToJSONKeyMapper: [String: String] {
@@ -122,12 +164,13 @@ class DarkModelTests: XCTestCase {
             override class var propertyToJSONKeyMapper: [String: String] {
                 return ["name": "user_name"]
             }
-            override class var collectionPropertyToModelTypeMapper: [String: Model.Type] {
-                return ["friends": PersonModel.self]
+            override class var propertyToCollectionElementTypeMapper: [String: AnyClass] {
+                return ["friends": PersonModel.self, "importantDates": NSDate.self]
             }
             var name = ""
             var age = 0
             var friends = [PersonModel]()
+            var importantDates = [Date]()
         }
         
         let rickyName = "Ricky"
@@ -144,11 +187,14 @@ class DarkModelTests: XCTestCase {
 
         let boyName = "Dark"
         let boyAge = 24
+        let girlBirthday: TimeInterval = 827251200
+        let bjOlympicGames: TimeInterval = 1218124800
         let boy = PersonModel()
         boy.name = boyName
         boy.age = boyAge
         boy.friends = [ricky, linda]
-        
+        boy.importantDates = [Date(timeIntervalSince1970: girlBirthday), Date(timeIntervalSince1970: bjOlympicGames)]
+
         let keyName = "user_name"
         let keyAge = "age"
         let jsonBoy = boy.json()
@@ -164,6 +210,10 @@ class DarkModelTests: XCTestCase {
         XCTAssertEqual(jsonLinda[keyName] as! String, lindaName)
         XCTAssertEqual(jsonLinda[keyAge] as! Int, lindaAge)
 
+        let jsonDates = jsonBoy["importantDates"] as! [Double]
+        XCTAssertEqual(jsonDates[0], girlBirthday)
+        XCTAssertEqual(jsonDates[1], bjOlympicGames)
+
         let boy2 = PersonModel(json: jsonBoy)
         XCTAssertEqual(boy2.name, boy.name)
         XCTAssertEqual(boy2.age, boy.age)
@@ -172,5 +222,6 @@ class DarkModelTests: XCTestCase {
         XCTAssertEqual(boy2.friends[0].age, boy.friends[0].age)
         XCTAssertEqual(boy2.friends[1].name, boy.friends[1].name)
         XCTAssertEqual(boy2.friends[1].age, boy.friends[1].age)
+        XCTAssertEqual(boy2.importantDates, boy.importantDates)
     }
 }

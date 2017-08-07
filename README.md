@@ -64,7 +64,7 @@ class PersonModel: Model {
     var age = 0
 }
 ```
-### Property Is Collection Type *And* Contains Model
+### Property Is Collection *And* Contains Object Which Is Not Auto Convertible 
 ```
 // JSON:
 {
@@ -79,17 +79,53 @@ class PersonModel: Model {
             "name": "Linda",
             "age": 25,
         }
+    ],
+    "moments": [
+        827251200,
+        1218124800,
     ]
 }
 
 // Model:
 class PersonModel: Model {
-    override class var collectionPropertyToModelTypeMapper: [String: Model.Type] {
-        return ["friends": PersonModel.self]
+    override class var propertyToCollectionElementTypeMapper: [String: AnyClass] {
+        return ["friends": PersonModel.self, "moments": NSDate.self]
     }
     var name = ""
     var age = 0
     var friends = [PersonModel]()
+    var moments = [Date]()
+}
+```
+
+### Use Optinal Int
+```
+// JSON:
+{
+    "user_name": "Dark",
+    "age": 24,
+}
+
+// Model:
+class PersonModel: Model {
+    var name = ""
+    var age: Int?
+
+    required init(json: Any?) {
+        super.init(json: json)
+        
+        if let dic = json as? [String: Any] {
+            age = dic[jsonKey("age")] as? Int
+        }
+    }
+    
+    override func json() -> [String : Any] {
+        var dic = super.json()
+        if let value = age {
+            dic[jsonKey("age")] = value
+        }
+        return dic
+    }
 }
 ```
 
@@ -163,7 +199,7 @@ class PersonModel: Model {
     var age = 0
 }
 ```
-### 属性字段是集合类型*并且*包含Model类型
+### 属性字段是个集合*并且*包含不能自动转换的类型
 ```
 // JSON:
 {
@@ -178,17 +214,53 @@ class PersonModel: Model {
             "name": "Linda",
             "age": 25,
         }
+    ],
+    "moments": [
+        827251200,
+        1218124800,
     ]
 }
 
 // Model:
 class PersonModel: Model {
-    override class var collectionPropertyToModelTypeMapper: [String: Model.Type] {
-        return ["friends": PersonModel.self]
+    override class var propertyToCollectionElementTypeMapper: [String: AnyClass] {
+        return ["friends": PersonModel.self, "moments": NSDate.self]
     }
     var name = ""
     var age = 0
     var friends = [PersonModel]()
+    var moments = [Date]()
+}
+```
+
+### Use Optinal Int
+```
+// JSON:
+{
+    "user_name": "Dark",
+    "age": 24,
+}
+
+// Model:
+class PersonModel: Model {
+    var name = ""
+    var age: Int?
+
+    required init(json: Any?) {
+        super.init(json: json)
+        
+        if let dic = json as? [String: Any] {
+            age = dic[jsonKey("age")] as? Int
+        }
+    }
+    
+    override func json() -> [String : Any] {
+        var dic = super.json()
+        if let value = age {
+            dic[jsonKey("age")] = value
+        }
+        return dic
+    }
 }
 ```
 

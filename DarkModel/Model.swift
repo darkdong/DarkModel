@@ -8,7 +8,7 @@
 
 import Foundation
 
-// NOTE: when declares a property of Int in Model, its type must NOT be optional.
+// NOTE: when declares a property of Int type
 
 // var anInt: Int = 0 // correct
 // var anInt: NSInteger = 0 // correct
@@ -44,13 +44,14 @@ open class Model: NSObject {
     }
 
     /// If property is a collection which contains objects of Model type, e.g. [Model], [String: Model]
+    /// or foundation type to be coverted, e.g [Date]
     /// property name and its Model type MUST be provided to create collection object correctly:
-    open class var collectionPropertyToModelTypeMapper: [String: Model.Type] {
+    open class var propertyToCollectionElementTypeMapper: [String: AnyClass] {
         return [:]
     }
     
     /// convenience to create an array of Model from JSON
-    public class func array(json: Any?) -> [Model] {
+    public class func array(from json: Any?) -> [Model] {
         return [Model](json: json, constructor: { (json) -> Model? in
             return self.init(json: json)
         })
@@ -123,7 +124,7 @@ open class Model: NSObject {
                 info.propertyKey = propertyKey
                 info.jsonKey = jsonKey(propertyKey)
                 
-                print("property:", propertyKey, "attributes:", String(cString: property_getAttributes(property)!))
+//                print("property:", propertyKey, "attributes:", String(cString: property_getAttributes(property)!))
                 
                 if let cstring = property_copyAttributeValue(property, PropertyAttributes.keyType) {
                     let string = String(cString: cstring)
@@ -159,41 +160,66 @@ open class Model: NSObject {
             for info in type(of: self).propertyInfos() {
                 if let jsonValue = dic[info.jsonKey] {
                     let propertyKey = info.propertyKey
-                    if propertiesToBeCustomConverted.contains(propertyKey) {
-                        let convertedValue = convert(value: jsonValue, for: propertyKey)
-                        setValue(convertedValue, forKey: propertyKey)
-                    }else {
-                        if let classType = info.attributes.classType {
-                            // property is of class type
-                            if let modelType = classType as? Model.Type {
-                                // Model
-                                let model = modelType.init(json: jsonValue)
-                                setValue(model, forKey: propertyKey)
-                            } else if let modelType = type(of: self).collectionPropertyToModelTypeMapper[propertyKey] {
-                                // NSArray or NSDictionary which contains Model
-                                if classType is NSArray.Type {
-                                    let models = modelType.array(json: jsonValue)
+                    if propertiesToBeIgnored.contains(propertyKey) {
+                        continue
+                    }
+                    if let classType = info.attributes.classType {
+                        // property is of class type
+                        if let modelType = classType as? Model.Type {
+                            // Model
+                            let model = modelType.init(json: jsonValue)
+                            setValue(model, forKey: propertyKey)
+                        } else if classType is NSDate.Type {
+                            // Date
+                            if let date = dateFromJSON(jsonValue, for: propertyKey) {
+                                setValue(date, forKey: propertyKey)
+                            } else {
+                                assertionFailure("Can't covert \(classType) automatically on \"\(propertyKey)\", You must implement your own objectFromJSON(for:) to return a \(classType)")
+                            }
+                        } else if classType is NSArray.Type {
+                            // Array
+                            if let elementType = type(of: self).propertyToCollectionElementTypeMapper[propertyKey] {
+                                if let modelType = elementType as? Model.Type {
+                                    let models = modelType.array(from: jsonValue)
                                     setValue(models, forKey: propertyKey)
-                                } else if classType is NSDictionary.Type {
-                                    let models = modelType.dictionary(json: jsonValue)
-                                    setValue(models, forKey: propertyKey)
-                                }
-                            } else if classType is NSDate.Type {
-                                // Date
-                                if let timestamp = jsonValue as? TimeInterval {
-                                    let date = Date(timeIntervalSince1970: timestamp)
-                                    setValue(date, forKey: propertyKey)
+                                } else if elementType is NSDate.Type {
+                                    let objects = [Date](json: jsonValue, constructor: { (json) -> Date? in
+                                        return dateFromJSON(json, for: propertyKey)
+                                    })
+                                    setValue(objects, forKey: propertyKey)
+                                } else {
+                                    // array which contains only auto-convertible type, e.g. [Int], [String]
+                                    setValue(jsonValue, forKey: propertyKey)
                                 }
                             } else {
-                                // just set proprety's value directly
-                                //1. for non-collection classes, e.g. NSString, NSNumber
-                                //2. and collection classes which contain only foundation objects, e.g. [Int], [String: Int]
+                                // array which contains only auto-convertible type, e.g. [Int], [String]
+                                setValue(jsonValue, forKey: propertyKey)
+                            }
+                        } else if classType is NSDictionary.Type {
+                            if let elementType = type(of: self).propertyToCollectionElementTypeMapper[propertyKey] {
+                                if let modelType = elementType as? Model.Type {
+                                    let models = modelType.dictionary(json: jsonValue)
+                                    setValue(models, forKey: propertyKey)
+                                } else if elementType is NSDate.Type {
+                                    let objects = [String: Date](json: jsonValue, constructor: { (json) -> Date? in
+                                        return dateFromJSON(json, for: propertyKey)
+                                    })
+                                    setValue(objects, forKey: propertyKey)
+                                } else {
+                                    // dictionary which contains only auto-convertible type, e.g. [String: Int]
+                                    setValue(jsonValue, forKey: propertyKey)
+                                }
+                            } else {
+                                // dictionary which contains only auto-convertible type, e.g. [String: Int]
                                 setValue(jsonValue, forKey: propertyKey)
                             }
                         } else {
-                            //property is primitive type
+                            // just set proprety's value directly for auto-convertible type, e.g. Int, String, NSNumber, NSString
                             setValue(jsonValue, forKey: propertyKey)
                         }
+                    } else {
+                        //property is primitive type
+                        setValue(jsonValue, forKey: propertyKey)
                     }
                 }
             }
@@ -222,21 +248,39 @@ open class Model: NSObject {
                 let jsonKey = info.jsonKey
                 if let model = value as? Model {
                     dictionary[jsonKey] = model.json()
-                } else if let models = value as? [Model] {
-                    var array = [Any]()
-                    for model in models {
-                        array.append(model.json())
-                    }
-                    dictionary[jsonKey] = array
-                } else if let models = value as? [String: Model] {
-                    var dic = [String: Any]()
-                    for (k, v) in models {
-                        dic[k] = v
-                    }
-                    dictionary[jsonKey] = dic
                 } else if let date = value as? Date {
-                    dictionary[jsonKey] = date.timeIntervalSince1970
-                } else {
+                    dictionary[jsonKey] = jsonFromDate(date, for: info.propertyKey)
+                } else if let objects = value as? [Any] {
+                    if let models = objects as? [Model] {
+                        var array = [Any]()
+                        for model in models {
+                            array.append(model.json())
+                        }
+                        dictionary[jsonKey] = array
+                    } else if let dates = objects as? [Date] {
+                        var array = [Any]()
+                        for date in dates {
+                            array.append(jsonFromDate(date, for: info.propertyKey))
+                        }
+                        dictionary[jsonKey] = array
+                    } else {
+                        dictionary[jsonKey] = objects
+                    }
+                } else if let objects = value as? [String: Any] {
+                    if let models = objects as? [String: Model] {
+                        var dic = [String: Any]()
+                        for (k, v) in models {
+                            dic[k] = v.json()
+                        }
+                        dictionary[jsonKey] = dic
+                    } else if let dates = objects as? [String: Date] {
+                        var dic = [String: Any]()
+                        for (k, v) in dates {
+                            dic[k] = jsonFromDate(v, for: info.propertyKey)
+                        }
+                        dictionary[jsonKey] = dic
+                    }
+                }else {
                     dictionary[jsonKey] = value
                 }
             }
@@ -244,12 +288,44 @@ open class Model: NSObject {
         return dictionary
     }
     
-    open var propertiesToBeCustomConverted: [String] {
+    open var propertiesToBeIgnored: [String] {
         return []
     }
     
-    open func convert(value: Any, for key: String) -> Any {
-        return value
+    open func objectFromJSON(_ json: Any?, for propertyKey: String) -> Any? {
+        return nil
+    }
+    
+    open func jsonFromObject(_ object: Any, for propertyKey: String) -> Any? {
+        return nil
+    }
+    
+    func dateFromJSON(_ json: Any?) -> Date? {
+        if let timestamp = json as? TimeInterval {
+            return Date(timeIntervalSince1970: timestamp)
+        } else {
+            return nil
+        }
+    }
+    
+    public func dateFromJSON(_ json: Any?, for propertyKey: String) -> Date? {
+        if let date = objectFromJSON(json, for: propertyKey) as? Date {
+            return date
+        } else {
+            return dateFromJSON(json)
+        }
+    }
+    
+    func jsonFromDate(_ date: Date) -> Any {
+        return date.timeIntervalSince1970
+    }
+    
+    public func jsonFromDate(_ date: Date, for propertyKey: String) -> Any {
+        if let json = jsonFromObject(date, for: propertyKey) {
+            return json
+        } else {
+            return jsonFromDate(date)
+        }
     }
     
     /// convert Model to JSON data
