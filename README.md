@@ -361,4 +361,4 @@ class PersonModel: Model {
 
 ## 许可证
 
-DarkModel 使用 MIT 许可证。 详见[查看许可证](https://github.com/darkdong/DarkModel/blob/master/LICENSE)。
+DarkModel 使用 MIT 许可证。 详情请[查看许可证](https://github.com/darkdong/DarkModel/blob/master/LICENSE)。
