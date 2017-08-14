@@ -23,6 +23,8 @@ import Foundation
 // if you really wannna declare an instance of optional struct type such as Int?, 
 // you must initiate it by yourself（override Model.init(json:) and write your own parsing statements）
 
+
+//NSCoding
 open class Model: NSObject {
     struct PropertyAttributes {
         static let keyType = "T"
@@ -234,22 +236,79 @@ open class Model: NSObject {
         }
     }
     
-    /// display property name and value friendly
-    override open var description: String {
-        let selfClass = type(of: self)
-        var desc = "|\(selfClass)| "
-        for info in selfClass.propertyInfos() {
-            desc += ", "
-            desc += info.propertyKey + ": "
-            if let propertyValue = value(forKey: info.propertyKey) {
-                desc += "\(propertyValue)"
-            } else {
-                desc += "nil"
-            }
+    
+//    //MARK: - NSCoding
+//    public required init?(coder aDecoder: NSCoder) {
+//    }
+//    
+//    public func encode(with aCoder: NSCoder) {
+//    }
+    
+    //MARK: - Ignored properties
+
+    open var propertiesToBeIgnored: [String] {
+        return []
+    }
+    
+    //MARK: - General conversion
+
+    open func objectFromJSON(_ json: Any?, for property: String) -> Any? {
+        return nil
+    }
+    
+    open func jsonFromObject(_ object: Any, for property: String) -> Any? {
+        return nil
+    }
+    
+    //MARK: - Date conversion
+    
+    ///Default is 1 means timestamp is on seconds scale
+    ///Override and return 1000 in subclass if date timestamp is milli-seconds
+    open func timestampScale(property: String) -> Double {
+        return 1
+    }
+    
+    func dateFromJSON(_ json: Any?, for property: String) -> Date? {
+        if let date = objectFromJSON(json, for: property) as? Date {
+            return date
+        } else if let timestamp = json as? TimeInterval {
+            let scale = timestampScale(property: property)
+            return Date(timeIntervalSince1970: timestamp / scale)
+        } else {
+            return nil
         }
-        return desc
+    }
+    
+    func jsonFromDate(_ date: Date, for property: String) -> Any {
+        if let json = jsonFromObject(date, for: property) {
+            return json
+        } else {
+            let scale = timestampScale(property: property)
+            return date.timeIntervalSince1970 * scale
+        }
+    }
+    
+    //MARK: - URL conversion
+
+    func urlFromJSON(_ json: Any?, for property: String) -> URL? {
+        if let url = objectFromJSON(json, for: property) as? URL {
+            return url
+        } else if let string = json as? String {
+            return URL(string: string)
+        } else {
+            return nil
+        }
     }
 
+    func jsonFromURL(_ url: URL, for property: String) -> Any {
+        if let json = jsonFromObject(url, for: property) {
+            return json
+        } else {
+            return url.absoluteString
+        }
+    }
+    
+    //MARK: - convert Model to JSON
     /// convert Model to JSON object
     open func json() -> [String: Any] {
         var dictionary = [String: Any]()
@@ -300,60 +359,6 @@ open class Model: NSObject {
         return dictionary
     }
     
-    open var propertiesToBeIgnored: [String] {
-        return []
-    }
-    
-    open func objectFromJSON(_ json: Any?, for property: String) -> Any? {
-        return nil
-    }
-    
-    open func jsonFromObject(_ object: Any, for property: String) -> Any? {
-        return nil
-    }
-    
-    open func timestampScale(property: String) -> Double {
-        return 1
-    }
-    
-    func dateFromJSON(_ json: Any?, for property: String) -> Date? {
-        if let date = objectFromJSON(json, for: property) as? Date {
-            return date
-        } else if let timestamp = json as? TimeInterval {
-            let scale = timestampScale(property: property)
-            return Date(timeIntervalSince1970: timestamp / scale)
-        } else {
-            return nil
-        }
-    }
-    
-    func urlFromJSON(_ json: Any?, for property: String) -> URL? {
-        if let url = objectFromJSON(json, for: property) as? URL {
-            return url
-        } else if let string = json as? String {
-            return URL(string: string)
-        } else {
-            return nil
-        }
-    }
-    
-    func jsonFromDate(_ date: Date, for property: String) -> Any {
-        if let json = jsonFromObject(date, for: property) {
-            return json
-        } else {
-            let scale = timestampScale(property: property)
-            return date.timeIntervalSince1970 * scale
-        }
-    }
-    
-    func jsonFromURL(_ url: URL, for property: String) -> Any {
-        if let json = jsonFromObject(url, for: property) {
-            return json
-        } else {
-            return url.absoluteString
-        }
-    }
-    
     /// convert Model to JSON data
     public func jsonData(options: JSONSerialization.WritingOptions = []) -> Data? {
         return try? JSONSerialization.data(withJSONObject: json(), options: options)
@@ -368,9 +373,27 @@ open class Model: NSObject {
         }
     }
     
+    //MARK: - Misc
+
     /// convenience to get property key's according json key
     public func jsonKey(_ propertyKey: String) -> String {
         return type(of: self).jsonKey(propertyKey)
+    }
+    
+    /// display property name and value friendly
+    override open var description: String {
+        let selfClass = type(of: self)
+        var desc = "|\(selfClass)| "
+        for info in selfClass.propertyInfos() {
+            desc += ", "
+            desc += info.propertyKey + ": "
+            if let propertyValue = value(forKey: info.propertyKey) {
+                desc += "\(propertyValue)"
+            } else {
+                desc += "nil"
+            }
+        }
+        return desc
     }
 }
 
