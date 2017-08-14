@@ -314,7 +314,7 @@ open class Model: NSObject, NSCoding {
     
     ///Default is 1 means timestamp is on seconds scale
     ///Override and return 1000 in subclass if date timestamp is milli-seconds
-    open func timestampScale(property: String) -> Double {
+    open func timestampScaleForDateProperty(_ property: String) -> Double {
         return 1
     }
     
@@ -322,7 +322,7 @@ open class Model: NSObject, NSCoding {
         if let date = objectFromJSON(json, for: property) as? Date {
             return date
         } else if let timestamp = json as? TimeInterval {
-            let scale = timestampScale(property: property)
+            let scale = timestampScaleForDateProperty(property)
             return Date(timeIntervalSince1970: timestamp / scale)
         } else {
             return nil
@@ -333,7 +333,7 @@ open class Model: NSObject, NSCoding {
         if let json = jsonFromObject(date, for: property) {
             return json
         } else {
-            let scale = timestampScale(property: property)
+            let scale = timestampScaleForDateProperty(property)
             return date.timeIntervalSince1970 * scale
         }
     }
