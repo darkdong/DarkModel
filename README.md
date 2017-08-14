@@ -108,7 +108,7 @@ class PersonModel: Model {
 }
 ```
 
-### Property Is Optinal Int Type
+### Property Is Optional Int Type
 ```
 // JSON:
 {
@@ -289,7 +289,7 @@ class PersonModel: Model {
 }
 ```
 
-### 属性类型为 Optinal Int
+### 属性类型为 Optional Int
 ```
 // JSON:
 {

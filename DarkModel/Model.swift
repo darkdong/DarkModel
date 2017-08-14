@@ -312,11 +312,16 @@ open class Model: NSObject {
         return nil
     }
     
+    open func timestampScale(property: String) -> Double {
+        return 1
+    }
+    
     func dateFromJSON(_ json: Any?, for property: String) -> Date? {
         if let date = objectFromJSON(json, for: property) as? Date {
             return date
         } else if let timestamp = json as? TimeInterval {
-            return Date(timeIntervalSince1970: timestamp)
+            let scale = timestampScale(property: property)
+            return Date(timeIntervalSince1970: timestamp / scale)
         } else {
             return nil
         }
@@ -336,7 +341,8 @@ open class Model: NSObject {
         if let json = jsonFromObject(date, for: property) {
             return json
         } else {
-            return date.timeIntervalSince1970
+            let scale = timestampScale(property: property)
+            return date.timeIntervalSince1970 * scale
         }
     }
     
