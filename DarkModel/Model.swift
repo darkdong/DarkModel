@@ -24,13 +24,12 @@ import Foundation
 // you must initiate it by yourself（override Model.init(json:) and write your own parsing statements）
 
 
-//NSCoding
-open class Model: NSObject {
+open class Model: NSObject, NSCoding {
     struct PropertyAttributes {
         static let keyType = "T"
         static let keyReadOnly = "R"
         
-        var classType: AnyClass?
+        var type: Any?
         var isReadOnly = false
     }
     
@@ -75,17 +74,29 @@ open class Model: NSObject {
     private static var cachedAllModelPropertyInfos: [String: [PropertyInfo]] = [:]
     
     /// extract property type from attribute string
-    private static func extractPropertyAttributeType(from string: String) -> AnyClass? {
+    private static func extractPropertyAttributeType(from string: String) -> Any? {
         // type string format: @"ClassName", B, q, f
-        if let char = string.characters.first, char == "@" {
+        let firstChar = string.characters.first!
+        if firstChar == "@" {
             //type is NSObject
             let start = string.index(string.startIndex, offsetBy: 2) //skip first two chars: @"
             let end = string.index(string.endIndex, offsetBy: -1) // until the last char "
             let className = string.substring(with: start..<end)
             return NSClassFromString(className)
+        } else {
+            switch string {
+            case "B":
+                return Bool.self
+            case "q":
+                return Int.self
+            case "f":
+                return Float.self
+            case "d":
+                return Double.self
+            default:
+                return nil
+            }
         }
-        
-        return nil
     }
     
     /// extract property read-only attribute
@@ -126,11 +137,11 @@ open class Model: NSObject {
                 info.propertyKey = propertyKey
                 info.jsonKey = jsonKey(propertyKey)
                 
-//                print("property:", propertyKey, "attributes:", String(cString: property_getAttributes(property)!))
+                print("property:", propertyKey, "attributes:", String(cString: property_getAttributes(property)!))
                 
                 if let cstring = property_copyAttributeValue(property, PropertyAttributes.keyType) {
                     let string = String(cString: cstring)
-                    info.attributes.classType = extractPropertyAttributeType(from: string)
+                    info.attributes.type = extractPropertyAttributeType(from: string)
                     free(cstring)
                 }
                 
@@ -165,7 +176,7 @@ open class Model: NSObject {
                     if propertiesToBeIgnored.contains(propertyKey) {
                         continue
                     }
-                    if let classType = info.attributes.classType {
+                    if let classType = info.attributes.type as? AnyClass {
                         // property is of class type
                         if let modelType = classType as? Model.Type {
                             // Model
@@ -229,7 +240,15 @@ open class Model: NSObject {
                         }
                     } else {
                         //property is primitive type
-                        setValue(jsonValue, forKey: propertyKey)
+//                        if info.attributes.type is CGPoint {
+//                            if let point = pointFromJSON(jsonValue, for: propertyKey) {
+//                                setValue(point, forKey: propertyKey)
+//                            } else {
+//                                assertionFailure("Can't covert to CGPoint automatically on \"\(propertyKey)\", You must implement your own objectFromJSON(for:) to return CGPoint")
+//                            }
+//                        } else {
+                            setValue(jsonValue, forKey: propertyKey)
+//                        }
                     }
                 }
             }
@@ -237,12 +256,52 @@ open class Model: NSObject {
     }
     
     
-//    //MARK: - NSCoding
-//    public required init?(coder aDecoder: NSCoder) {
-//    }
-//    
-//    public func encode(with aCoder: NSCoder) {
-//    }
+    //MARK: - NSCoding
+    public required init?(coder aDecoder: NSCoder) {
+        super.init()
+        
+        for info in type(of: self).propertyInfos() {
+            let propertyKey = info.propertyKey
+            if propertiesToBeIgnored.contains(propertyKey) {
+                continue
+            }
+            let type = info.attributes.type
+            if type is AnyClass {
+                // property is of class type
+                aDecoder.decodeObject(forKey: propertyKey)
+            } else {
+                //property is primitive type
+                switch type {
+                case is Bool:
+                    aDecoder.decodeBool(forKey: propertyKey)
+                case is Int:
+                    aDecoder.decodeInteger(forKey: propertyKey)
+                case is Float:
+                    aDecoder.decodeFloat(forKey: propertyKey)
+                case is Double:
+                    aDecoder.decodeDouble(forKey: propertyKey)
+                case is CGPoint:
+                    aDecoder.decodeCGPoint(forKey: propertyKey)
+                case is CGSize:
+                    aDecoder.decodeCGSize(forKey: propertyKey)
+                case is CGRect:
+                    aDecoder.decodeCGRect(forKey: propertyKey)
+                default:
+                    break
+                }
+            }
+        }
+    }
+    
+    public func encode(with aCoder: NSCoder) {
+        for info in type(of: self).propertyInfos() {
+            let propertyKey = info.propertyKey
+            if propertiesToBeIgnored.contains(propertyKey) {
+                continue
+            }
+            aCoder.encode(value(forKey: propertyKey), forKey: propertyKey)
+        }
+    }
     
     //MARK: - Ignored properties
 
@@ -308,6 +367,26 @@ open class Model: NSObject {
         }
     }
     
+    //MARK: - CGPoint conversion
+
+    func pointFromJSON(_ json: Any?, for property: String) -> CGPoint? {
+        if let point = objectFromJSON(json, for: property) as? CGPoint {
+            return point
+        } else if let points = json as? [Double] {
+            return CGPoint(x: points[0], y: points[1])
+        } else {
+            return nil
+        }
+    }
+    
+    func jsonFromPoint(_ point: CGPoint, for property: String) -> Any {
+        if let json = jsonFromObject(point, for: property) {
+            return json
+        } else {
+            return [point.x, point.y]
+        }
+    }
+    
     //MARK: - convert Model to JSON
     /// convert Model to JSON object
     open func json() -> [String: Any] {
@@ -321,7 +400,12 @@ open class Model: NSObject {
                     dictionary[jsonKey] = jsonFromDate(date, for: info.propertyKey)
                 } else if let url = value as? URL {
                     dictionary[jsonKey] = jsonFromURL(url, for: info.propertyKey)
-                } else if let objects = value as? [Any] {
+                }
+//                else if let point = value as? CGPoint {
+//                    dictionary[jsonKey] = jsonFromPoint(point, for: info.propertyKey)
+//                }
+                else if let objects = value as? [Any] {
+                    //Array
                     if let models = objects as? [Model] {
                         var array = [Any]()
                         for model in models {
@@ -338,6 +422,7 @@ open class Model: NSObject {
                         dictionary[jsonKey] = objects
                     }
                 } else if let objects = value as? [String: Any] {
+                    //Dictionary
                     if let models = objects as? [String: Model] {
                         var dic = [String: Any]()
                         for (k, v) in models {
@@ -351,7 +436,7 @@ open class Model: NSObject {
                         }
                         dictionary[jsonKey] = dic
                     }
-                }else {
+                } else {
                     dictionary[jsonKey] = value
                 }
             }

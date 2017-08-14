@@ -37,6 +37,7 @@ class DarkModelTests: XCTestCase {
         class PersonModel: Model {
             var name = ""
             var age = 0
+//            var location = CGPoint.zero
             var homePage: URL!
             var birthday: Date?
             var hobbies = [String]()
@@ -72,6 +73,7 @@ class DarkModelTests: XCTestCase {
         let jsonBoy = boy.json()
         
         XCTAssertTrue(JSONSerialization.isValidJSONObject(jsonBoy))
+        
         XCTAssertEqual(jsonBoy[keyName] as! String, boyName)
         XCTAssertEqual(jsonBoy[keyAge] as! Int, boyAge)
         XCTAssertEqual(jsonBoy[keyHomePage] as! String, homePage)
@@ -206,6 +208,10 @@ class DarkModelTests: XCTestCase {
                 super.init()
             }
             
+            required init?(coder aDecoder: NSCoder) {
+                fatalError("init(coder:) has not been implemented")
+            }
+            
             override func json() -> [String : Any] {
                 var dic = super.json()
                 if let value = age {
@@ -275,5 +281,21 @@ class DarkModelTests: XCTestCase {
         
         let jsonBoy = boy.json()
         XCTAssertEqual(jsonBoy["birthday"] as! String, "1996-03-20")
+    }
+    
+    func testTypes() {
+        class PersonModel: Model {
+            var int: Int = 0
+            var float: Float = 0
+            var double: Double = 0
+            var bool: Bool = false
+//            var point: CGPoint = .zero
+//            var size: CGSize = .zero
+//            var rect: CGRect = .zero
+        }
+        let person = PersonModel()
+        let json = person.json()
+        XCTAssertTrue(JSONSerialization.isValidJSONObject(json), "OKOK")
+
     }
 }
