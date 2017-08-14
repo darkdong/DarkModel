@@ -182,6 +182,8 @@ open class Model: NSObject, NSCoding {
         super.init()
     }
     
+    //MARK: - convert JSON to Model
+
     required public init(json: Any?) {
         super.init()
         
@@ -225,11 +227,11 @@ open class Model: NSObject, NSCoding {
                                     setValue(objects, forKey: propertyKey)
                                 } else {
                                     // array which contains only auto-convertible type, e.g. [Int], [String]
-                                    setValue(jsonValue, forKey: propertyKey)
+                                    setProperty(propertyKey, with: jsonValue)
                                 }
                             } else {
                                 // array which contains only auto-convertible type, e.g. [Int], [String]
-                                setValue(jsonValue, forKey: propertyKey)
+                                setProperty(propertyKey, with: jsonValue)
                             }
                         } else if classType is NSDictionary.Type {
                             // Dictionary
@@ -244,33 +246,32 @@ open class Model: NSObject, NSCoding {
                                     setValue(objects, forKey: propertyKey)
                                 } else {
                                     // dictionary which contains only auto-convertible type, e.g. [String: Int]
-                                    setValue(jsonValue, forKey: propertyKey)
+                                    setProperty(propertyKey, with: jsonValue)
                                 }
                             } else {
                                 // dictionary which contains only auto-convertible type, e.g. [String: Int]
-                                setValue(jsonValue, forKey: propertyKey)
+                                setProperty(propertyKey, with: jsonValue)
                             }
                         } else {
                             // Other class types that can be auto-convertible, e.g. NSNumber, NSString.
-                            setValue(jsonValue, forKey: propertyKey)
+                            setProperty(propertyKey, with: jsonValue)
                         }
                     } else {
                         //property is primitive type
-//                        if info.attributes.type is CGPoint {
-//                            if let point = pointFromJSON(jsonValue, for: propertyKey) {
-//                                setValue(point, forKey: propertyKey)
-//                            } else {
-//                                assertionFailure("Can't covert to CGPoint automatically on \"\(propertyKey)\", You must implement your own objectFromJSON(for:) to return CGPoint")
-//                            }
-//                        } else {
-                            setValue(jsonValue, forKey: propertyKey)
-//                        }
+                        setProperty(propertyKey, with: jsonValue)
                     }
                 }
             }
         }
     }
     
+    func setProperty(_ propertyKey: String, with json: Any?) {
+        if let object = objectFromJSON(json, for: propertyKey) {
+            setValue(object, forKey: propertyKey)
+        } else {
+            setValue(json, forKey: propertyKey)
+        }
+    }
     
     //MARK: - NSCoding
     public required init?(coder aDecoder: NSCoder) {
@@ -357,27 +358,8 @@ open class Model: NSObject, NSCoding {
         }
     }
     
-    //MARK: - CGPoint conversion
-
-    func pointFromJSON(_ json: Any?, for property: String) -> CGPoint? {
-        if let point = objectFromJSON(json, for: property) as? CGPoint {
-            return point
-        } else if let points = json as? [Double] {
-            return CGPoint(x: points[0], y: points[1])
-        } else {
-            return nil
-        }
-    }
-    
-    func jsonFromPoint(_ point: CGPoint, for property: String) -> Any {
-        if let json = jsonFromObject(point, for: property) {
-            return json
-        } else {
-            return [point.x, point.y]
-        }
-    }
-    
     //MARK: - convert Model to JSON
+    
     /// convert Model to JSON object
     open func json() -> [String: Any] {
         var dictionary = [String: Any]()
@@ -390,11 +372,7 @@ open class Model: NSObject, NSCoding {
                     dictionary[jsonKey] = jsonFromDate(date, for: info.propertyKey)
                 } else if let url = value as? URL {
                     dictionary[jsonKey] = jsonFromURL(url, for: info.propertyKey)
-                }
-//                else if let point = value as? CGPoint {
-//                    dictionary[jsonKey] = jsonFromPoint(point, for: info.propertyKey)
-//                }
-                else if let objects = value as? [Any] {
+                } else if let objects = value as? [Any] {
                     //Array
                     if let models = objects as? [Model] {
                         var array = [Any]()
@@ -427,7 +405,11 @@ open class Model: NSObject, NSCoding {
                         dictionary[jsonKey] = dic
                     }
                 } else {
-                    dictionary[jsonKey] = value
+                    if let json = jsonFromObject(value, for: info.propertyKey) {
+                        dictionary[jsonKey] = json
+                    } else {
+                        dictionary[jsonKey] = value
+                    }
                 }
             }
         }
