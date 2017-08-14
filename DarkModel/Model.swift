@@ -278,33 +278,8 @@ open class Model: NSObject, NSCoding {
         
         for info in type(of: self).propertyInfos() {
             let propertyKey = info.propertyKey
-            if propertiesToBeIgnored.contains(propertyKey) {
-                continue
-            }
-            let type = info.attributes.type
-            if type is AnyClass {
-                // property is of class type
-                aDecoder.decodeObject(forKey: propertyKey)
-            } else {
-                //property is primitive type
-                switch type {
-                case is Bool:
-                    aDecoder.decodeBool(forKey: propertyKey)
-                case is Int:
-                    aDecoder.decodeInteger(forKey: propertyKey)
-                case is Float:
-                    aDecoder.decodeFloat(forKey: propertyKey)
-                case is Double:
-                    aDecoder.decodeDouble(forKey: propertyKey)
-                case is CGPoint:
-                    aDecoder.decodeCGPoint(forKey: propertyKey)
-                case is CGSize:
-                    aDecoder.decodeCGSize(forKey: propertyKey)
-                case is CGRect:
-                    aDecoder.decodeCGRect(forKey: propertyKey)
-                default:
-                    break
-                }
+            if let v = aDecoder.decodeObject(forKey: propertyKey) {
+                setValue(v, forKey: propertyKey)
             }
         }
     }
@@ -312,10 +287,9 @@ open class Model: NSObject, NSCoding {
     public func encode(with aCoder: NSCoder) {
         for info in type(of: self).propertyInfos() {
             let propertyKey = info.propertyKey
-            if propertiesToBeIgnored.contains(propertyKey) {
-                continue
+            if let v = value(forKey: propertyKey) {
+                aCoder.encode(v, forKey: propertyKey)
             }
-            aCoder.encode(value(forKey: propertyKey), forKey: propertyKey)
         }
     }
     

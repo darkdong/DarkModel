@@ -271,6 +271,28 @@ class DarkModelTests: XCTestCase {
         XCTAssertEqual(jsonBoy["birthday"] as! String, "1996-03-20")
     }
     
+    func testCoding() {
+        class UserModel: Model {
+            var id = 0
+            var name = ""
+            var avatar: URL!
+            var createAt: Date!
+        }
+        
+        let user = UserModel()
+        user.id = 1001
+        user.name = "jimmy"
+        user.avatar = URL(string: "http://163.com/1.jpg")
+        user.createAt = Date()
+        
+        let data = NSKeyedArchiver.archivedData(withRootObject: user)
+        let user2 = NSKeyedUnarchiver.unarchiveObject(with: data) as! UserModel
+        XCTAssertEqual(user2.id, user.id)
+        XCTAssertEqual(user2.name, user.name)
+        XCTAssertEqual(user2.avatar, user.avatar)
+        XCTAssertEqual(user2.createAt, user.createAt)
+    }
+    
 //    func testTypes() {
 //        class PersonModel: Model {
 //            var int: Int = 0
