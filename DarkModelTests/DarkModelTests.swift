@@ -20,19 +20,7 @@ class DarkModelTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
         super.tearDown()
     }
-    
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-    }
-    
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
-    }
-    
+        
     func testBasic() {
         class PersonModel: Model {
             var name = ""
@@ -283,19 +271,20 @@ class DarkModelTests: XCTestCase {
         XCTAssertEqual(jsonBoy["birthday"] as! String, "1996-03-20")
     }
     
-    func testTypes() {
-        class PersonModel: Model {
-            var int: Int = 0
-            var float: Float = 0
-            var double: Double = 0
-            var bool: Bool = false
+//    func testTypes() {
+//        class PersonModel: Model {
+//            var int: Int = 0
+//            var float: Float = 0
+//            var double: Double = 0
+//            var bool: Bool = false
 //            var point: CGPoint = .zero
 //            var size: CGSize = .zero
 //            var rect: CGRect = .zero
-        }
-        let person = PersonModel()
-        let json = person.json()
-        XCTAssertTrue(JSONSerialization.isValidJSONObject(json), "OKOK")
-
-    }
+//            var inset: UIEdgeInsets = .zero
+//        }
+//        let person = PersonModel()
+//        let json = person.json()
+//        XCTAssertTrue(JSONSerialization.isValidJSONObject(json), "OKOK")
+//
+//    }
 }

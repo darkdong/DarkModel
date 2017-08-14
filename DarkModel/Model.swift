@@ -75,14 +75,30 @@ open class Model: NSObject, NSCoding {
     
     /// extract property type from attribute string
     private static func extractPropertyAttributeType(from string: String) -> Any? {
-        // type string format: @"ClassName", B, q, f
         let firstChar = string.characters.first!
         if firstChar == "@" {
-            //type is NSObject
-            let start = string.index(string.startIndex, offsetBy: 2) //skip first two chars: @"
+            //type is NSObject: @"NSString"
+            let start = string.index(string.startIndex, offsetBy: 2) //skip first two chars @"
             let end = string.index(string.endIndex, offsetBy: -1) // until the last char "
             let className = string.substring(with: start..<end)
             return NSClassFromString(className)
+        } else if firstChar == "{" {
+            //type is NSValue: {CGPoint=dd}, {CGRect={CGPoint=dd}{CGSize=dd}}, {UIEdgeInsets=dddd}
+            let start = string.index(string.startIndex, offsetBy: 1) //skip first char {
+            let end = string.characters.index(of: "=")! // until the first char =
+            let typeName = string.substring(with: start..<end)
+            switch typeName {
+            case "CGPoint":
+                return CGPoint.self
+            case "CGSize":
+                return CGSize.self
+            case "CGRect":
+                return CGRect.self
+            case "UIEdgeInsets":
+                return UIEdgeInsets.self
+            default:
+                return nil
+            }
         } else {
             switch string {
             case "B":
@@ -137,7 +153,7 @@ open class Model: NSObject, NSCoding {
                 info.propertyKey = propertyKey
                 info.jsonKey = jsonKey(propertyKey)
                 
-                print("property:", propertyKey, "attributes:", String(cString: property_getAttributes(property)!))
+//                print("property:", propertyKey, "attributes:", String(cString: property_getAttributes(property)!))
                 
                 if let cstring = property_copyAttributeValue(property, PropertyAttributes.keyType) {
                     let string = String(cString: cstring)
