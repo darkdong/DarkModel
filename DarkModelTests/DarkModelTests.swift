@@ -293,9 +293,15 @@ class DarkModelTests: XCTestCase {
         XCTAssertEqual(user2.createAt, user.createAt)
     }
     
-//    func testTypes() {
-//        class PersonModel: Model {
-//            var int: Int = 0
+    func testTypes() {
+        class PersonModel: Model {
+            enum Day: Int {
+                case sunday = 0
+                case monday = 1
+            }
+            var int: Int = 0
+            var int2: Int = 1
+//            var day: Day = .sunday
 //            var float: Float = 0
 //            var double: Double = 0
 //            var bool: Bool = false
@@ -303,10 +309,10 @@ class DarkModelTests: XCTestCase {
 //            var size: CGSize = .zero
 //            var rect: CGRect = .zero
 //            var inset: UIEdgeInsets = .zero
-//        }
-//        let person = PersonModel()
-//        let json = person.json()
-//        XCTAssertTrue(JSONSerialization.isValidJSONObject(json), "OKOK")
-//
-//    }
+        }
+        let person = PersonModel()
+        let json = person.json()
+        XCTAssertTrue(JSONSerialization.isValidJSONObject(json), "OKOK")
+
+    }
 }

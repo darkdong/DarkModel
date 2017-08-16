@@ -43,7 +43,11 @@ open class Model: NSObject, NSCoding {
     open class var propertyToJSONKeyMapper: [String: String] {
         return [:]
     }
-
+    
+    open class var ignoredProperties: [String] {
+        return []
+    }
+    
     /// If property is a collection which contains objects of Model type, e.g. [Model], [String: Model]
     /// or foundation type to be coverted, e.g [Date]
     /// property name and its Model type MUST be provided to create collection object correctly:
@@ -191,7 +195,7 @@ open class Model: NSObject, NSCoding {
             for info in type(of: self).propertyInfos() {
                 if let jsonValue = dic[info.jsonKey] {
                     let propertyKey = info.propertyKey
-                    if propertiesToBeIgnored.contains(propertyKey) {
+                    if type(of: self).ignoredProperties.contains(propertyKey) {
                         continue
                     }
                     if let classType = info.attributes.type as? AnyClass {
@@ -292,12 +296,6 @@ open class Model: NSObject, NSCoding {
                 aCoder.encode(v, forKey: propertyKey)
             }
         }
-    }
-    
-    //MARK: - Ignored properties
-
-    open var propertiesToBeIgnored: [String] {
-        return []
     }
     
     //MARK: - General conversion
