@@ -165,7 +165,7 @@ open class Model: NSObject, NSCoding {
                 }
                 
                 if let cstring = property_copyAttributeValue(property, PropertyAttributes.keyReadOnly) {
-                    //readonly property, discard it
+                    // readonly property, discard it
                     free(cstring)
                 } else {
                     infos.append(info)
