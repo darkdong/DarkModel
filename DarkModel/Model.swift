@@ -30,7 +30,6 @@ open class Model: NSObject, NSCoding {
         static let keyReadOnly = "R"
         
         var type: Any?
-        var isReadOnly = false
     }
     
     struct PropertyInfo {
@@ -166,12 +165,9 @@ open class Model: NSObject, NSCoding {
                 }
                 
                 if let cstring = property_copyAttributeValue(property, PropertyAttributes.keyReadOnly) {
-                    let string = String(cString: cstring)
-                    info.attributes.isReadOnly = extractPropertyAttributeReadOnly(from: string)
+                    //readonly property, discard it
                     free(cstring)
-                }
-                
-                if !info.attributes.isReadOnly {
+                } else {
                     infos.append(info)
                 }
             }
