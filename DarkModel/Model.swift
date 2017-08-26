@@ -68,7 +68,7 @@ open class Model: NSObject, NSCoding {
         })
     }
     
-    public static var defaultTimestampScale: Double = 1
+    public static var defaultTimestampScaleForDateProperty: Double = 1
     
     /// convenience to get property key's according json key
     class func jsonKey(_ propertyKey: String) -> String {
@@ -311,7 +311,7 @@ open class Model: NSObject, NSCoding {
     ///Default is 1 means timestamp is on seconds scale
     ///Override and return 1000 in subclass if date timestamp is milli-seconds
     open func timestampScaleForDateProperty(_ property: String) -> Double {
-        return Model.defaultTimestampScale
+        return Model.defaultTimestampScaleForDateProperty
     }
     
     func dateFromJSON(_ json: Any?, for property: String) -> Date? {
