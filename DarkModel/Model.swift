@@ -436,7 +436,7 @@ open class Model: NSObject, NSCoding {
     /// display property name and value friendly
     override open var description: String {
         let selfClass = type(of: self)
-        var desc = "|\(selfClass)| "
+        var desc = "|- \(selfClass) -|"
         for info in selfClass.propertyInfos() {
             desc += ", "
             desc += info.propertyKey + ": "
