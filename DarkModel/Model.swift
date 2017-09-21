@@ -154,7 +154,7 @@ open class Model: NSObject, NSCoding {
                 var info = PropertyInfo()
                 let property = properties[i]
                 
-                let propertyKey = String(cString: property_getName(property)!)
+                let propertyKey = String(cString: property_getName(property))
                 info.propertyKey = propertyKey
                 info.jsonKey = jsonKey(propertyKey)
                 
